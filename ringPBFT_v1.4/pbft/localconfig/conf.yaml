@@ -1,0 +1,12 @@
+Pbft:
+    TotalNum: 8
+    PrimaryNum: 4
+    TimeOut: 10
+    ViewChangeTimeOut: 5
+
+Peer:
+    Port:   50000
+    NodeID: 0
+
+Ledger:
+    Path:  D:/data

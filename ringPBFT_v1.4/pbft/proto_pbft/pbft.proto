@@ -1,0 +1,79 @@
+// Copyright 2015 gRPC authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.routeguide";
+option java_outer_classname = "RouteGuideProto";
+
+package proto;
+
+// Interface exported by the server.
+service BroadCast {
+    rpc GetReqResponse(RequestMsg) returns (PrePrepareMsg) {}
+    rpc GetPrePrepareResponse(PrePrepareMsg) returns (VoteMsg) {}         //output = prepareMsg
+    rpc GetPrepareResponse(VoteMsg) returns (VoteMsg) {}               //input: prepareMsg output: commitMsg
+    rpc GetCommitResponse(VoteMsg) returns (ReplyMsg) {}                     //input: commitMsg  output: ReplyMsg
+    rpc GetViewChangeResponse(ViewChangeMsg) returns (ViewChangeMsg) {}       //viewChange
+}
+
+message RequestMsg {
+    int64 Timestamp = 1;
+	string ClientID = 2;
+	string Operation = 3;
+	int64 SequenceID = 4;
+}
+
+message RingSign {
+    string C0 = 1;
+	repeated string R = 2;
+	string YDashX = 3;
+	string YDashY = 4;
+    string value = 5;
+    repeated string PubId = 6;
+
+}
+
+message ReplyMsg {
+    int64 ViewID = 1;
+    int64 Timestamp = 2;
+	string ClientID = 3;
+	string NodeID = 4;
+	string Result = 5;
+}
+
+message PrePrepareMsg {
+    int64 ViewID = 1;
+    int64 SequenceID = 2;
+	string Digest = 3;
+	RequestMsg RequestMsg = 4;
+}
+
+message VoteMsg {
+    int64 ViewID = 1;
+    int64 SequenceID = 2;
+	string Digest = 3;
+	string NodeID = 4;
+	int64 msgType = 5;
+    RingSign RS = 6;
+}
+
+message ViewChangeMsg {
+    int64 ViewID = 1;
+    string NodeID = 2;
+    string PrimaryNode = 3;
+    string Digest = 4;
+    int64 msgType = 5;
+}
